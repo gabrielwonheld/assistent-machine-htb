@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>Products</h2>
+<br>
+
+<div>
+  <button type="submit" value="" class="btn btn-secondary" onclick="abrirModalCriar('produtoModalCriar')">Register New
+    Product</button>
+</div>
+<label for="buscador">Search Product:</label>
+<input type="text" id="buscador" class="form-control" placeholder="Type product name..." onkeyup="filtrarTabela()">
+<br><br>
+<table class="table table-striped table-dark">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Product</th>
+      <th scope="col">Price</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if produtos %}
+    {% for produto in produtos %}
+    <tr>
+      <td>{{ produto.id }}</td>
+      <td>{{ produto.name }}</td>
+      <td class="campo-preco"> {{ "R$: %.2f" | format(produto.price) | replace(".",",") }}</td>
+      <td class="dropdown-action" style="position: relative;">
+        <!-- Simple Action Buttons instead of Dropdown for simplicity if preferred, but keeping dropdown structure -->
+        <button class="btn btn-sm btn-primary"
+          onclick="abrirModalEditar('{{ produto.id }}', '{{ produto.name }}', '{{ '%.2f'|format(produto.price) | replace('.',',')}}')">
+          Edit
+        </button>
+        <button class="btn btn-sm btn-danger" onclick="excluirProduto('{{ produto.id }}')">
+          Delete
+        </button>
+        <a class="btn btn-sm btn-info" href="{{ produto.ficha_tecnica_path }}" target="_blank">
+          View
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr>
+      <td colspan="4" class="text-center">No products found.</td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+{% include "_modal_criar_produto.html" %}
+{% include "_modal_editar_produto.html" %}
+<!-- Clonar removed for simplicity as requested "basico" -->
+
+<script>
+  function excluirProduto(produtoId) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+
+    fetch(`/product/${produtoId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => {
+        if (res.ok) {
+          alert("Product deleted successfully!");
+          location.reload();
+        } else {
+          return res.json().then(data => {
+            alert(data.message || "Error deleting product.");
+          });
+        }
+      })
+      .catch(() => {
+        alert("Error communicating with server.");
+      });
+  }
+
+  function filtrarTabela() {
+    const input = document.getElementById("buscador");
+    const filter = input.value.toUpperCase();
+    const table = document.querySelector("table");
+    const tr = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < tr.length; i++) {
+      let td = tr[i].getElementsByTagName("td")[1]; // Column 1 is Name
+      if (td) {
+        let txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  /* Basic modal styles if not in layout */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .modal-container {
+    background: #333;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    color: white;
+  }
+
+  .close {
+    float: right;
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+
+  .form-field {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    background: #555;
+    border: 1px solid #777;
+    color: white;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+
+{% endblock %}

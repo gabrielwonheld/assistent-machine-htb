@@ -1,0 +1,43 @@
+<div id="produtoModalClonar" class="modal-overlay" style="display:none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Criar Produto</h3>
+            <span class="close" onclick="fecharModal('produtoModalClonar')">&times;</span>
+        </div>
+        <form id="formClonarProduto" method="POST" enctype="multipart/form-data" class="modal-body">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+
+            <label>Nome:</label>
+            <input class="form-field" type="text" name="nome" id="nome" required>
+
+            <label>Modelo:</label>
+            <input class="form-field" type="text" name="modelo" id="modelo" required>
+
+            <label>Cor:</label>
+            <input class="form-field" type="text" name="cor" id="cor" required>
+
+            <label>Estoque:</label>
+            <input class="form-field" type="number" name="estoque" id="estoque" min="0" required>
+
+
+            <label>Preço Unitário:</label>
+            <input class="form-field valor_uni campo-preco" type="text" name="preco" id="preco" placeholder="R$ 0,00"
+                required>
+
+            <label>Status do Produto:</label>
+            <select class="form-field" name="status_produto_id" id="status_produto" required>
+                <option value="">Selecione o status do produto</option>
+                {% for s in status_produtos %}
+                <option value="{{ s.id }}">{{ s.nome }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Custo Unitário:</label>
+            <input class="form-field valor_uni campo-preco" type="text" name="custo_unitario" id="clonar_custo_unitario"
+                placeholder="R$ 0,00" required>
+
+            <input type="submit" value="Criar Produto" class="submit-btn">
+        </form>
+    </div>
+</div>

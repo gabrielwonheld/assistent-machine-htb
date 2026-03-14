@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="p-4">
+    <h3>Meu Perfil</h3>
+    <hr>
+    <div id="userData">
+    </div>
+
+    <h4 class="mt-4">Editar Informações</h4>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label>Novo Username</label>
+            <input type="text" id="new_user" class="form-control bg-dark text-white">
+            <label>Nova Senha</label>
+            <input type="password" id="new_password" class="form-control bg-dark text-white">
+            <label>Confirmar Senha</label>
+            <input type="password" id="confirm_password" class="form-control bg-dark text-white">
+            <label>Image Profile</label>
+            <input type="file" accept=".jpg, .jpeg, .png" onchange="previewImage()" id="image_profile"
+                class="form-control bg-dark text-white">
+        </div>
+        <div class="col-12">
+            <button onclick="updateProfile()" class="btn btn-primary">Salvar Alterações</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage() {
+        const file = document.getElementById('image_profile').files[0];
+        const reader = new FileReader();
+        reader.onloadend = function () {
+            document.getElementById('image_profile').src = reader.result;
+        }
+        reader.readAsDataURL(file);
+    }
+
+    async function loadProfile() {
+        const res = await fetch('/update-profile');
+        const data = await res.json();
+        document.getElementById('userData').innerHTML = `
+        <p><strong>Usuário:</strong> ${data.username}</p>
+        <p><strong>Image Profile:</strong> <img src="${data.image_profile}" alt="Profile"></p>
+    `;
+    }
+
+    async function updateProfile() {
+        const payload = {
+            username: document.getElementById('new_user').value,
+            password: document.getElementById('new_password').value,
+            confirm_password: document.getElementById('confirm_password').value,
+            image_profile: document.getElementById('image_profile').files[0]
+        };
+
+        const res = await fetch('/update-profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'enctype': 'multipart/form-data' },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) { alert("Perfil Atualizado!"); loadProfile(); }
+        else { alert("Erro ao atualizar perfil!"); }
+    }
+    loadProfile();
+</script>
+{% endblock %}

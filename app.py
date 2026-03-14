@@ -1,12 +1,16 @@
-from flask import Flask, request, jsonify
-from flask_login import LoginManager, login_user, login_required, current_user
+from flask import Flask, request, jsonify, render_template, redirect, url_for   
+from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from init_db import db, init_extensions, init_app_db
-from models.userModel import User
+from models.userModel import User, Produto, Venda
+import os
+from werkzeug.utils import secure_filename
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///assistencia.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'hackthebox_secret_key'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 # 1. Inicializa o banco e cria tabelas
 init_extensions(app)
@@ -39,8 +43,20 @@ def login():
         return jsonify({"message": "Autenticado com sucesso!"})
     return jsonify({"message": "Credenciais inválidas"}), 401
 
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/register')
+def register_page():
+    return render_template('register.html')
+
 @app.route('/register', methods=['POST'])
-# @login_required
 def register_profile():
 
     data = request.json
@@ -57,6 +73,11 @@ def register_profile():
         "is_admin": user.is_admin
     })
 
+@app.route('/profile', methods=['GET'])
+@login_required
+def profile_page():
+    return render_template('profile.html')
+
 @app.route('/update-profile', methods=['GET'])
 @login_required
 def get_update_profile():
@@ -64,29 +85,255 @@ def get_update_profile():
         "id": current_user.id,
         "username": current_user.username,
         "is_admin": current_user.is_admin
-        # "role": "operador" if not current_user.is_admin else "admin"
     })
 
 @app.route('/update-profile', methods=['POST'])
 @login_required
 def post_update_profile():
     data = request.json
-    # O Mass Assignment acontece aqui
+    if not data.get('username'):
+        data['username'] = current_user.username
+    if not data.get('password'):
+        data['password'] = current_user.password
+
+    if data.get('username') == User.query.filter_by(username=data.get('username')).first().username:
+        return jsonify({"error": "Username já existe"}), 400
+
+    new_pass = data['password']
+    new_confirm_pass = data['confirm_password']
+    if str(new_pass) != str(new_confirm_pass):
+        return jsonify({"error": "Senhas não coincidem"}), 400
+
     current_user.update_profile(data)
     db.session.commit()
     return jsonify({
         "message": "Perfil atualizado!",
         "user": current_user.username,
-        "is_admin": current_user.is_admin
+        "is_admin": current_user.is_admin,
+        "pass":current_user.password
     })
 
-# Rota de teste para verificar se é admin
-@app.route('/admin/dashboard')
+
+@app.route('/clients', methods=['GET'])
 @login_required
-def admin_dashboard():
+def get_clients():
+    clients = Client.query.all()
+    return jsonify({
+        "clients": clients
+    })
+
+@app.route('/clients', methods=['POST'])
+@login_required
+def post_clients():
+    data = request.json
+    client = Client(
+        name=data.get('name'),
+        phone=data.get('phone')
+    )
+    db.session.add(client)
+    db.session.commit()
+    return jsonify({
+        "message": "Success create client!",
+        "client": client.name,
+        "phone": client.phone
+    })
+
+@app.route('/clients/<int:id>', methods=['DELETE'])
+@login_required
+def delete_client(id):
+    client = Client.query.get(id)
+    db.session.delete(client)
+    db.session.commit()
+    return jsonify({
+        "message": "Client deleted!"
+    })
+
+@app.route('/clients/<int:id>', methods=['PUT'])
+@login_required
+def update_client(id):
+    client = Client.query.get(id)
+    data = request.json
+    client.update_profile(data)
+    db.session.commit()
+    return jsonify({
+        "message": "Client updated!"
+    })
+
+@app.route('/list-clients', methods=['GET'])
+@login_required
+def list_clients():
+    clients = Client.query.all()
+    return render_template('list_clients.html', clients=clients)
+
+# @app.route('/admin')
+# @login_required
+# def admin_page():
+    # if not current_user.is_admin:
+        # return jsonify({"error": "Acesso negado. Apenas administradores."}), 403
+    # return render_template('admin.html')
+
+
+# @app.route('/admin/upload-spec', methods=['POST'])
+# @login_required
+# def upload_file():
+
+    # if not current_user.is_admin:
+        # return jsonify({"error": "Unauthorized"}), 403
+
+    # if 'file' not in request.files:
+
+        # return jsonify({"error": "No file part"}), 400
+
+    # file = request.files['file']
+    # filename = secure_filename(file.filename)
+    # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    # return jsonify({"message": "File uploaded!", "path": f"/static/uploads/{filename}"})
+
+
+@app.route('/product', methods=['GET'])
+@login_required
+def manage_produtos():
+    if request.method == 'GET':
+        produtos = Produto.query.all()
+        return render_template('list_produtos.html', produtos=produtos)
+    
+
+@app.route('/product',methods=["POST"])
+@login_required
+def post_produtos():
+    try:
+        if not current_user.is_admin:
+            return jsonify({"error": "Unauthorized"}), 403
+
+        if request.is_json:
+            data = request.json
+        else:
+            data = request.form
+
+        price_raw = data.get("price", "0")
+        price_clean = float(str(price_raw).replace("R$", "").replace(".", "").replace(",", "."))
+
+        produto = Produto(
+            name=data.get("name"),
+            price=price_clean,
+            description=data.get("description", ""),
+        )
+
+        if 'file' in request.files:
+            file = request.files['file']
+            if file.filename != '':
+                filename = secure_filename(file.filename)
+                if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                    os.makedirs(app.config['UPLOAD_FOLDER'])
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                produto.ficha_tecnica_path = f"/static/uploads/{filename}"
+
+        db.session.add(produto)
+        db.session.commit()
+        return jsonify({
+            "message": "Product create success",
+            "name": produto.name,
+            "price": produto.price,
+            "description": produto.description,
+            "ficha_tecnica_path": produto.ficha_tecnica_path
+        })
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"message": str(e)}), 400
+
+
+@app.route('/product/<int:id>', methods=['PUT', 'DELETE'])
+@login_required
+def product_actions(id):
+
     if not current_user.is_admin:
-        return jsonify({"error": "Acesso negado. Apenas administradores."}), 403
-    return jsonify({"message": "Bem-vindo à área restrita, Admin!"})
+        return jsonify({"message": "Unauthorized"}), 403
+    produto = Produto.query.get(id)
+    if not produto:
+        return jsonify({"message": "Product not found"}), 404
+
+    if request.method == 'DELETE':
+        db.session.delete(produto)
+        db.session.commit()
+        return jsonify({"message": "Product deleted success"})
+
+    if request.method == 'PUT':
+        data = request.json
+        if 'name' in data:
+            produto.name = data['name']
+        if 'price' in data:
+            produto.price = float(str(data.get("price")).replace("R$","").replace(".","").replace(",","."))
+        if 'description' in data:
+            produto.description = data['description']
+        if 'fic_tec' in data and data['fic_tec'] != "":
+            produto.ficha_tecnica_path = data['fic_tec']
+        db.session.commit()
+        return jsonify({"message": "Product updated success"})
+
+@app.route('/product/api-get-product')
+def get_product():
+    
+    term = request.args.get('q','').strip()
+    if len(term) < 1:
+        return jsonify([])
+    
+    produtos = Produto.query.filter(Produto.name.ilike(f'%{term}%')).limit(5).all()
+
+    return jsonify([{
+
+        "name":produto.name,
+        "price":produto.price,
+        "description":produto.description,
+        "ficha_tecnica_path":produto.ficha_tecnica_path
+    } for produto in produtos])
+
+
+@app.route('/seles')
+@login_required
+def get_sell():
+    try:
+        # Join Venda, Produto, and User to get details
+        vendas = db.session.query(Venda, Produto, User)\
+            .join(Produto, Venda.produto_id == Produto.id)\
+            .join(User, Venda.user_id == User.id)\
+            .order_by(Venda.data_venda.desc())\
+            .all()
+        
+        produtos = Produto.query.all()
+        return render_template('vendas.html', vendas=vendas, produtos=produtos)
+    except Exception as e:
+        print(e)
+        return render_template('vendas.html', vendas=[], produtos=[], error=str(e))
+    
+@app.route('/seles',methods=["POST"])
+@login_required
+def post_sell():
+
+    data = request.json
+
+    product = Produto.query.get(int(data.get("product_id")))
+    if not product:
+        return jsonify([{
+            "message":"This products not exists",
+            "status":False
+        }])
+
+    total = float(data.get("qtd")) * product.price
+
+    sele = Venda(
+        produto_id = product.id,
+        user_id = current_user.id,
+        quantidade = data.get("qtd"),
+        valor_total = total
+    )
+
+    db.session.add(sele)
+    db.session.commit()
+
+    return jsonify([{
+        "message":"Sale is successful"        
+    }])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

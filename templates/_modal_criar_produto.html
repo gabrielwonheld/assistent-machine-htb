@@ -1,0 +1,51 @@
+<div id="produtoModalCriar" class="modal-overlay" style="display:none;">
+    <div class="modal-container">
+        <span class="close" onclick="fecharModal('produtoModalCriar')">&times;</span>
+        <h3>Register New Product</h3>
+        <form id="formCriarProduto">
+
+            <label>Name:</label>
+            <input class="form-field" type="text" name="name" id="nomeCriar" required>
+
+            <label>Unit Price:</label>
+            <input class="form-field campo-preco" type="text" name="price" id="precoCriar" placeholder="$ 0.00"
+                required>
+
+            <label>Technical Data Sheet:</label>
+            <input class="form-field" type="file" name="file" id="fileCriar" required>
+
+            <input type="submit" value="Save Product" class="submit-btn">
+        </form>
+    </div>
+</div>
+
+<script>
+    function abrirModalCriar(id) {
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    document.getElementById('formCriarProduto').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const form = document.getElementById('formCriarProduto');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('/product', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                alert("Product created!");
+                location.reload();
+            } else {
+                const data = await response.json();
+                alert(data.message || "Error creating product");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Connection error");
+        }
+    });
+</script>

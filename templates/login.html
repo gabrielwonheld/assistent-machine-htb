@@ -1,0 +1,141 @@
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    color: white;
+
+    /* 🔥 Imagem de fundo */
+    background: url("/static/img/bancada-mnt.png") no-repeat center center fixed;
+    background-size: cover;
+  }
+
+  .flex-center {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .form-box {
+    background-color: rgba(31, 31, 31, 0.9);
+    /* fundo semi-transparente */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  .form-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: white;
+  }
+
+  .form-label {
+    font-size: 12px;
+    text-align: left;
+    color: rgba(177, 177, 177, 0.7);
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 25px;
+    border: none;
+    border-bottom: 1px solid #888;
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.9);
+    transition: border-color 0.3s;
+  }
+
+  .form-input:focus {
+    border-color: #38d39f;
+    outline: none;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #38d39f;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 2px 2px 7px #38d39f70;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #2fa981;
+    box-shadow: none;
+  }
+
+  .form-link {
+    display: block;
+    margin-top: 20px;
+    color: #38d39f;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .form-link:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="flex-center">
+  <div class="form-box">
+    <form id="loginForm">
+      <h1 class="form-title">Login</h1>
+
+      <label class="form-label" for="username">Username</label>
+      <input type="text" id="username" name="username" class="form-input" required>
+
+      <label class="form-label" for="password">Senha</label>
+      <input type="password" id="password" name="password" class="form-input" required>
+
+      <input type="submit" value="Entrar" class="submit-btn">
+    </form>
+
+    <script>
+      document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+          const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: username,
+              password: password
+            })
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            window.location.href = '/profile';
+          } else {
+            alert(data.message || 'Erro ao realizar login');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Erro de conexão');
+        }
+      });
+    </script>
+
+  </div>
+</div>

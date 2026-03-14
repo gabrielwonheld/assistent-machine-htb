@@ -1,0 +1,602 @@
+/* =========================================
+   1. VARIÁVEIS E TEMA
+   ========================================= */
+:root {
+  --bg: #ffffff;
+  --bg-panel: #f1f1f1;
+  --text: #121212;
+  --text-muted: #555;
+  --accent: #38d39f;
+  --accent-hover: #2fa981;
+  --input-bg: #e5e5e5;
+  --button-bg: #edbe00;
+  --button-hover: #c7a600;
+  --border-color: #ddd;
+  --shadow: rgba(0, 0, 0, 0.1);
+
+  /* New Variables from Template */
+  --bg-body: #f8f9fa;
+  --text-color: #212529;
+  --navbar-bg: #ffffff;
+  --navbar-border: #e9ecef;
+  --dropdown-bg: #ffffff;
+  --dropdown-hover: #f8f9fa;
+  --accent-color: #0d6efd;
+}
+
+[data-theme="dark"] {
+  --bg: #121212;
+  --bg-panel: #1f1f1f;
+  --text: #f5f5f5;
+  --text-muted: rgba(177, 177, 177, 0.5);
+  --input-bg: #2a2a2a;
+  --button-bg: #38d39f;
+  /* No dark, o botão principal segue o accent */
+  --button-hover: #2fa981;
+  --border-color: #333;
+  --shadow: rgba(0, 0, 0, 0.4);
+
+  /* New Variables from Template */
+  --bg-body: #121212;
+  --text-color: #e0e0e0;
+  --navbar-bg: #1e1e1e;
+  --navbar-border: #333;
+  --dropdown-bg: #252525;
+  --dropdown-hover: #333;
+}
+
+/* Base Body Styles from Template */
+body {
+  background-color: var(--bg-body);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* =========================================
+   2. RESET E BASE
+   ========================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
+  padding-top: 5.5rem;
+  /* Espaço para o header fixo */
+  padding-bottom: 60px;
+  /* Espaço para a barra de atalhos */
+}
+
+.container {
+  background-color: var(--bg-panel);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--shadow);
+  max-width: 1200px;
+  width: 95%;
+  margin: 2rem auto;
+  text-align: center;
+}
+
+/* =========================================
+   3. TIPOGRAFIA E ELEMENTOS DE FORMULÁRIO
+   ========================================= */
+h1,
+h2,
+h3 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.form-field {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--input-bg);
+  color: var(--text);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.readonly-input {
+  background-color: var(--bg-panel) !important;
+  cursor: not-allowed;
+  color: var(--text-muted);
+}
+
+.form-field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56, 211, 159, 0.2);
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  /* Allows stacking on small screens */
+}
+
+.form-row>.form-group {
+  flex: 1;
+  min-width: 250px;
+  /* Ensures fields don't get too narrow */
+}
+
+/* =========================================
+   4. BOTÕES E LINKS
+   ========================================= */
+.btn-base,
+.submit-btn,
+.btn-submit-secondary,
+.btn-next,
+.btn-prev {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.submit-btn,
+.btn-submit-secondary {
+  width: 100%;
+  background-color: var(--button-bg);
+  color: #000;
+  margin-top: 1rem;
+}
+
+.submit-btn:hover,
+.btn-submit-secondary:hover {
+  background-color: var(--button-hover);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 6px 12px;
+}
+
+.btn-secondary:hover {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+.link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--accent);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+
+
+/* =========================================
+   5. DASHBOARD E MÉTRICAS
+   ========================================= */
+.dashboard-area {
+  background: var(--bg-panel);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 2rem;
+}
+
+.cards-scroller {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.metric-card {
+  flex: 1;
+  min-width: 150px;
+  background: var(--input-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--text-muted);
+  box-shadow: 0 2px 5px var(--shadow);
+}
+
+.metric-card.active {
+  background: var(--accent);
+  border-left-color: var(--bg);
+  color: #fff;
+}
+
+/* =========================================
+   6. SISTEMA DE ABAS
+   ========================================= */
+.tab-header {
+  display: flex;
+  background: var(--bg-panel);
+  border-bottom: 2px solid var(--border-color);
+  gap: 5px;
+  padding: 0.5rem 0.5rem 0;
+  border-radius: 8px 8px 0 0;
+}
+
+.tab-btn {
+  padding: 12px 20px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  transition: 0.3s;
+}
+
+.tab-btn.active {
+  background: var(--bg);
+  color: var(--accent);
+  border: 1px solid var(--border-color);
+  border-bottom-color: var(--bg);
+  font-weight: bold;
+}
+
+.tab-container {
+  background: var(--bg);
+  border: 1px solid var(--border-color);
+  border-top: none;
+  padding: 1.5rem;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Botões de Navegação (F1, F2) */
+.btn-next,
+.btn-prev {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* Cores adaptativas ao tema */
+  background-color: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--border-color);
+}
+
+.btn-next:hover,
+.btn-prev:hover {
+  background-color: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+}
+
+/* Toolbar de Caixa (F7, F8, F10) */
+.caixa-toolbar {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+/* Ajuste para botões que usam classes do Bootstrap + classes personalizadas */
+.caixa-toolbar .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}
+
+/* =========================================
+   7. AUTOCOMPLETE, MODAIS E COMPONENTES
+   ========================================= */
+.autocomplete-wrapper {
+  position: relative;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  max-height: 250px;
+  overflow-y: auto;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 10px var(--shadow);
+}
+
+.autocomplete-list div {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.autocomplete-list div:hover,
+.autocomplete-active {
+  background-color: var(--accent) !important;
+  color: #000 !important;
+  font-weight: bold;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: var(--bg-panel);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  border: 1px solid var(--border-color);
+}
+
+/* =========================================
+   8. BARRA DE ATALHOS E UTILITÁRIOS
+   ========================================= */
+.shortcuts-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #1a1a1a;
+  color: white;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 10px;
+  font-size: 0.8rem;
+  z-index: 1000;
+  border-top: 1px solid #333;
+}
+
+.shortcut-item span {
+  background: #f1c40f;
+  color: #000;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.valor-final-badge {
+  background: rgba(56, 211, 159, 0.15);
+  border: 1px solid var(--accent);
+  padding: 8px 15px;
+  border-radius: 6px;
+  display: inline-block;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* =========================================
+   9. ANIMAÇÕES E MEDIA QUERIES
+   ========================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .shortcuts-bar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    height: auto;
+  }
+}
+
+/* =========================================
+   10. DROPDOWNS E MENUS DE AÇÃO (GLOBAL)
+   ========================================= */
+.dropdown-action {
+  position: relative;
+  justify-content: flex-end;
+  align-items: center;
+  display: flex;
+}
+
+.icon-action {
+  color: #aaa;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.icon-action:hover {
+  background-color: #333;
+}
+
+.action-menu {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  min-width: 150px;
+  padding: 8px;
+  margin-top: 5px;
+  z-index: 10;
+}
+
+.action-menu.hidden {
+  display: none;
+}
+
+.action-menu button {
+  width: 100%;
+  padding: 10px 15px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.action-menu button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.action-menu button i {
+  margin-right: 8px;
+}
+
+.action-menu button.danger {
+  color: #ff4d4d;
+}
+
+.action-menu button.danger:hover {
+  background-color: rgba(255, 77, 77, 0.1);
+}
+
+.action-menu .divider {
+  border-bottom: 1px solid var(--border-color);
+  margin: 4px 0;
+}
+
+/* =========================================
+   11. BOTÕES PADRONIZADOS EXTRAS
+   ========================================= */
+.btn-primary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background-color: var(--button-bg);
+  color: #000;
+}
+
+.btn-primary:hover {
+  background-color: var(--button-hover);
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   12. TOAST NOTIFICATIONS (Global)
+   ========================================= */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 11000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast-msg {
+  min-width: 250px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: var(--bg-panel);
+  color: var(--text);
+  box-shadow: 0 4px 12px var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease;
+  border-left: 4px solid var(--text-muted);
+}
+
+.toast-msg.success {
+  border-left-color: #28a745;
+}
+
+.toast-msg.error {
+  border-left-color: #dc3545;
+}
+
+.toast-msg.warning {
+  border-left-color: #ffc107;
+}
+
+.toast-msg.info {
+  border-left-color: #17a2b8;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
