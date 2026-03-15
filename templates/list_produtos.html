@@ -26,11 +26,11 @@
     <tr>
       <td>{{ produto.id }}</td>
       <td>{{ produto.name }}</td>
-      <td class="campo-preco"> {{ "R$: %.2f" | format(produto.price) | replace(".",",") }}</td>
+      <td class="campo-preco"> {{ "$ %.2f" | format(produto.price) }}</td>
       <td class="dropdown-action" style="position: relative;">
         <!-- Simple Action Buttons instead of Dropdown for simplicity if preferred, but keeping dropdown structure -->
         <button class="btn btn-sm btn-primary"
-          onclick="abrirModalEditar('{{ produto.id }}', '{{ produto.name }}', '{{ '%.2f'|format(produto.price) | replace('.',',')}}')">
+          onclick="abrirModalEditar('{{ produto.id }}', '{{ produto.name }}', '{{ '%.2f'|format(produto.price) }}')">
           Edit
         </button>
         <button class="btn btn-sm btn-danger" onclick="excluirProduto('{{ produto.id }}')">

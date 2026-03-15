@@ -98,10 +98,10 @@
       <label class="form-label" for="username">Username</label>
       <input type="text" id="username" name="username" class="form-input" required>
 
-      <label class="form-label" for="password">Senha</label>
+      <label class="form-label" for="password">Password</label>
       <input type="password" id="password" name="password" class="form-input" required>
 
-      <input type="submit" value="Entrar" class="submit-btn">
+      <input type="submit" value="Sign In" class="submit-btn">
     </form>
 
     <script>
@@ -128,11 +128,11 @@
           if (response.ok) {
             window.location.href = '/profile';
           } else {
-            alert(data.message || 'Erro ao realizar login');
+            alert(data.message || 'Error occurred during login');
           }
         } catch (error) {
           console.error('Error:', error);
-          alert('Erro de conexão');
+          alert('Connection error');
         }
       });
     </script>

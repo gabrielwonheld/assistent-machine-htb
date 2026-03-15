@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Cadastro</title>
+  <title>Register</title>
   <style>
     html,
     body {
@@ -96,7 +96,7 @@
 <body>
   <div class="form-container">
     <form id="registerForm">
-      <h1>Criar Conta</h1>
+      <h1>Create Account</h1>
 
       <label class="subtitle" for="username">USERNAME:</label>
       <input type="text" name="username" id="username">
@@ -106,7 +106,7 @@
 
       <input type="submit" value="SUBMIT" class="submit-btn">
     </form>
-    <a href="{{ url_for('login_page') }}" class="login-link">Ir para Login</a>
+    <a href="{{ url_for('login_page') }}" class="login-link">Go to Login</a>
   </div>
 </body>
 
@@ -134,11 +134,11 @@
       if (response.ok) {
         window.location.href = '/login';
       } else {
-        alert(data.message || 'Erro ao realizar login');
+        alert(data.message || 'Error occurred during registration');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Erro de conexão');
+      alert('Connection error');
     }
   });
 </script>

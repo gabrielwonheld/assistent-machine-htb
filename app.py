@@ -1,7 +1,7 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for   
+from flask import Flask, request, jsonify, render_template, redirect, url_for, render_template_string
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from init_db import db, init_extensions, init_app_db
-from models.userModel import User, Produto, Venda
+from models.userModel import User, Produto, Venda, Client
 import os
 from werkzeug.utils import secure_filename
 
@@ -32,7 +32,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return jsonify({"status": "online", "message": "Sistema de Assistência Técnica v1.0"})
+    return render_template('index.html')
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -40,8 +40,8 @@ def login():
     user = User.query.filter_by(username=data.get('username')).first()
     if user and user.check_password(data.get('password')):
         login_user(user)
-        return jsonify({"message": "Autenticado com sucesso!"})
-    return jsonify({"message": "Credenciais inválidas"}), 401
+        return jsonify({"message": "Authenticated successfully!"})
+    return jsonify({"message": "Invalid credentials"}), 401
 
 @app.route('/login')
 def login_page():
@@ -84,33 +84,49 @@ def get_update_profile():
     return jsonify({
         "id": current_user.id,
         "username": current_user.username,
-        "is_admin": current_user.is_admin
+        "is_admin": current_user.is_admin,
+        "image_profile": current_user.image_profile or ''
     })
 
 @app.route('/update-profile', methods=['POST'])
 @login_required
 def post_update_profile():
-    data = request.json
+    data = request.json if request.is_json else request.form.to_dict()
+
+    if data.get('username') != current_user.username and data.get('username') != None and data.get('username') != '':
+        if User.query.filter_by(username=data.get('username')).first():
+            return jsonify({"error": "Username already exists"}), 400
+
     if not data.get('username'):
         data['username'] = current_user.username
     if not data.get('password'):
         data['password'] = current_user.password
-
-    if data.get('username') == User.query.filter_by(username=data.get('username')).first().username:
-        return jsonify({"error": "Username já existe"}), 400
-
+        data['confirm_password'] = current_user.password
+    
     new_pass = data['password']
     new_confirm_pass = data['confirm_password']
+    
     if str(new_pass) != str(new_confirm_pass):
-        return jsonify({"error": "Senhas não coincidem"}), 400
+        return jsonify({"error": "Passwords do not match"}), 400
+
+
+    if 'image_profile' in request.files:
+        file = request.files['image_profile']
+        if file.filename != '':
+            filename = secure_filename(file.filename)
+            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                os.makedirs(app.config['UPLOAD_FOLDER'])
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            current_user.image_profile = f"/static/uploads/{filename}"
 
     current_user.update_profile(data)
     db.session.commit()
     return jsonify({
-        "message": "Perfil atualizado!",
+        "message": "Profile updated!",
         "user": current_user.username,
         "is_admin": current_user.is_admin,
-        "pass":current_user.password
+        "pass":current_user.password,
+        "image_profile":current_user.image_profile
     })
 
 
@@ -165,31 +181,6 @@ def list_clients():
     clients = Client.query.all()
     return render_template('list_clients.html', clients=clients)
 
-# @app.route('/admin')
-# @login_required
-# def admin_page():
-    # if not current_user.is_admin:
-        # return jsonify({"error": "Acesso negado. Apenas administradores."}), 403
-    # return render_template('admin.html')
-
-
-# @app.route('/admin/upload-spec', methods=['POST'])
-# @login_required
-# def upload_file():
-
-    # if not current_user.is_admin:
-        # return jsonify({"error": "Unauthorized"}), 403
-
-    # if 'file' not in request.files:
-
-        # return jsonify({"error": "No file part"}), 400
-
-    # file = request.files['file']
-    # filename = secure_filename(file.filename)
-    # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-    # return jsonify({"message": "File uploaded!", "path": f"/static/uploads/{filename}"})
-
 
 @app.route('/product', methods=['GET'])
 @login_required
@@ -227,7 +218,7 @@ def post_produtos():
                 if not os.path.exists(app.config['UPLOAD_FOLDER']):
                     os.makedirs(app.config['UPLOAD_FOLDER'])
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                produto.ficha_tecnica_path = f"/static/uploads/{filename}"
+                produto.ficha_tecnica_path = f"/uploads/{filename}"
 
         db.session.add(produto)
         db.session.commit()
@@ -334,6 +325,19 @@ def post_sell():
     return jsonify([{
         "message":"Sale is successful"        
     }])
+
+@app.route('/uploads/<filename>')
+def serve_uploads(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    if not os.path.exists(filepath):
+        return "Not found", 404
+    
+    with open(filepath, 'r') as f:
+        try:
+            file_content = f.read()
+            return render_template_string(file_content)
+        except Exception as e:
+            return "Error reading file", 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

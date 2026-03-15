@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Ignorar arquivos de upload
+static/uploads/*
+!static/uploads/.gitkeep

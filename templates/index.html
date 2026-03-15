@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>32Bits IT Support & Services</title>
+    <!-- CSS Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #212529;
+            color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .hero-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #1a1d20 0%, #2c3237 100%);
+            border-bottom: 2px solid #ffc107;
+        }
+
+        .service-card {
+            background-color: #343a40;
+            border: 1px solid #495057;
+            border-radius: 10px;
+            padding: 30px;
+            height: 100%;
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffc107;
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background-color: #ffc107;
+            color: #212529;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+        }
+
+        footer {
+            background-color: #1a1d20;
+            border-top: 1px solid #495057;
+            padding: 40px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Hero Section -->
+    <header class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-3 fw-bold text-warning mb-4">
+                <i class="bi bi-cpu-fill me-3"></i>32Bits IT Support
+            </h1>
+            <p class="lead mb-5 col-md-8 mx-auto text-light">
+                Complete corporate IT solutions. Server maintenance, data recovery, and software licensing to ensure
+                your business never stops.
+            </p>
+            <a href="#servicos" class="btn btn-outline-warning btn-lg px-5 rounded-pill">Our Services</a>
+        </div>
+    </header>
+
+    <!-- Services Section -->
+    <section id="servicos" class="py-5">
+        <div class="container py-4">
+            <h2 class="text-center fw-bold mb-5 pb-3">Our Specialties</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="service-card text-center">
+                        <div class="icon-circle">
+                            <i class="bi bi-tools"></i>
+                        </div>
+                        <h4 class="mb-3">Hardware Maintenance</h4>
+                        <p class="text-muted">Motherboard repairs, component replacement, BGA soldering, and preventive
+                            chemical cleaning for corporate desktops and laptops.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-card text-center">
+                        <div class="icon-circle">
+                            <i class="bi bi-hdd-network"></i>
+                        </div>
+                        <h4 class="mb-3">Infrastructure</h4>
+                        <p class="text-muted">Implementation and configuration of local servers (Windows Server /
+                            Linux), wired networks, and edge security with physical firewalls.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-card text-center">
+                        <div class="icon-circle">
+                            <i class="bi bi-database-exclamation"></i>
+                        </div>
+                        <h4 class="mb-3">Data Recovery</h4>
+                        <p class="text-muted">Advanced recovery services for compromised hard drives (HDD/SSD) and
+                            corrupted database rescue.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-5 bg-dark">
+        <div class="container text-center py-4">
+            <h2 class="fw-bold mb-4">Need immediate support?</h2>
+            <p class="lead text-muted mb-4">Our team of experts is ready to analyze your problem and provide an accurate
+                diagnosis.</p>
+            <p class="fs-5">
+                <i class="bi bi-telephone-fill text-warning me-2"></i> +1 (555) 4002-8922<br>
+                <i class="bi bi-envelope-fill text-warning me-2"></i> contact@32bits.thm
+            </p>
+            <p class="text-muted mt-4 small">
+                We provide on-site support from Monday to Friday, 08:00 AM to 06:00 PM.<br>
+                Technology Street, 404 - São Paulo/SP
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-0 text-secondary">
+                &copy; 2026 32Bits IT Support. All rights reserved.
+            </p>
+            <small class="text-muted">Registration: 00.123.456/0001-99</small>
+        </div>
+    </footer>
+
+</body>
+
+</html>
