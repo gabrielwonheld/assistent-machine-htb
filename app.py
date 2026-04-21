@@ -58,7 +58,6 @@ def register_page():
 
 @app.route('/register', methods=['POST'])
 def register_profile():
-
     data = request.json
     user = User(
         username=data.get('username'),
@@ -97,18 +96,10 @@ def post_update_profile():
         if User.query.filter_by(username=data.get('username')).first():
             return jsonify({"error": "Username already exists"}), 400
 
-    if not data.get('username'):
-        data['username'] = current_user.username
-    if not data.get('password'):
-        data['password'] = current_user.password
-        data['confirm_password'] = current_user.password
-    
-    new_pass = data['password']
-    new_confirm_pass = data['confirm_password']
-    
-    if str(new_pass) != str(new_confirm_pass):
+    if str(data['password']) != str(data['confirm_password']):
         return jsonify({"error": "Passwords do not match"}), 400
 
+    data = {key: value for key, value in data.items() if value not in ('', None)}
 
     if 'image_profile' in request.files:
         file = request.files['image_profile']
@@ -195,7 +186,9 @@ def manage_produtos():
 def post_produtos():
     try:
         if not current_user.is_admin:
-            return jsonify({"error": "Unauthorized"}), 403
+            return jsonify({"message":
+             "Insufficient Permissions: The user is not assigned the \"admin\" role required for the requested action."
+             }), 403
 
         if request.is_json:
             data = request.json
@@ -250,15 +243,30 @@ def product_actions(id):
         return jsonify({"message": "Product deleted success"})
 
     if request.method == 'PUT':
-        data = request.json
+        if request.is_json:
+            data = request.json
+        else:
+            data = request.form
+
         if 'name' in data:
             produto.name = data['name']
         if 'price' in data:
             produto.price = float(str(data.get("price")).replace("R$","").replace(".","").replace(",","."))
         if 'description' in data:
             produto.description = data['description']
+
         if 'fic_tec' in data and data['fic_tec'] != "":
             produto.ficha_tecnica_path = data['fic_tec']
+
+        if 'file' in request.files:
+            file = request.files['file']
+            if file.filename != '':
+                filename = secure_filename(file.filename)
+                if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                    os.makedirs(app.config['UPLOAD_FOLDER'])
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                produto.ficha_tecnica_path = f"/uploads/{filename}"
+
         db.session.commit()
         return jsonify({"message": "Product updated success"})
 

@@ -12,9 +12,8 @@ Passwords:
 
 | User  | Password                            |
 | ----- | ----------------------------------- |
-| user1 | [pass phrase, not too hard to type] |
-| user2 | [pass phrase, not too hard to type] |
-| root  | [pass phrase, not too hard to type] |
+| user | K9QbyodhT3 |
+| root  | L173tnaNxs |
 
 ### Key Processes
 

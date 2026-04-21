@@ -29,13 +29,27 @@
         const id = document.getElementById('edit_produto_id').value;
         const name = document.getElementById('edit_nome').value;
         const price = document.getElementById('precoEditar').value;
-        const fic_tec = document.getElementById('fic_tecEditar').value;
+        const ficTecInput = document.getElementById('fic_tecEditar');
+
+        let bodyPayload;
+        let headers = {};
+
+        if (ficTecInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('price', price);
+            formData.append('file', ficTecInput.files[0]);
+            bodyPayload = formData;
+        } else {
+            bodyPayload = JSON.stringify({ name, price, fic_tec: "" });
+            headers['Content-Type'] = 'application/json';
+        }
 
         try {
             const response = await fetch(`/product/${id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, price, fic_tec })
+                headers: headers,
+                body: bodyPayload
             });
 
             if (response.ok) {

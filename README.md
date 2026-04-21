@@ -34,6 +34,6 @@ python3 app.py
 ```
 
 The application will start running on port 5000 and can be accessed in your browser at:
-`http://localhost:5000` or `http://0.0.0.0:5000`
+`http://localhost:5000` or `http://[IP_ADDRESS]`
 
 Good luck, and Happy Hacking!

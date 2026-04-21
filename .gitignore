@@ -12,3 +12,4 @@ wheels/
 # Ignorar arquivos de upload
 static/uploads/*
 !static/uploads/.gitkeep
+*.db
